@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tmdblib", "tmdblib\tmdblib.vcproj", "{0A21F60E-F5C7-4EAE-B584-DA367D2622C3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{E3E90756-3625-4880-AB7A-4CA2C4936A8B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0A21F60E-F5C7-4EAE-B584-DA367D2622C3} = {0A21F60E-F5C7-4EAE-B584-DA367D2622C3}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +18,10 @@ Global
 		{0A21F60E-F5C7-4EAE-B584-DA367D2622C3}.Debug|Win32.Build.0 = Debug|Win32
 		{0A21F60E-F5C7-4EAE-B584-DA367D2622C3}.Release|Win32.ActiveCfg = Release|Win32
 		{0A21F60E-F5C7-4EAE-B584-DA367D2622C3}.Release|Win32.Build.0 = Release|Win32
+		{E3E90756-3625-4880-AB7A-4CA2C4936A8B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E3E90756-3625-4880-AB7A-4CA2C4936A8B}.Debug|Win32.Build.0 = Debug|Win32
+		{E3E90756-3625-4880-AB7A-4CA2C4936A8B}.Release|Win32.ActiveCfg = Release|Win32
+		{E3E90756-3625-4880-AB7A-4CA2C4936A8B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,6 +18,7 @@
 #include <stack>
 
 #include <Poco/URI.h>
+#include <Poco/StreamCopier.h>
 #include <Poco/Net/Net.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
