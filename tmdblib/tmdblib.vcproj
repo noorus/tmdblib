@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="json_spirit.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -125,6 +126,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="json_spirit.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

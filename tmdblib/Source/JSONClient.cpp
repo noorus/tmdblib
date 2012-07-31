@@ -5,6 +5,7 @@ namespace TMDb {
 
   using namespace Poco::Net;
   using Poco::URI;
+  using std::stringstream;
 
   string wideToString( const wstring& str, UINT codepage )
   {
@@ -36,9 +37,10 @@ namespace TMDb {
     mSession = new HTTPClientSession( wideToString( host, CP_UTF8 ), port );
   }
 
-  void JSONClient::request( const wstring& url )
+  json_spirit::wValue JSONClient::request( const wstring& url )
   {
     URI uri( wideToString( url, CP_UTF8 ) );
+
     HTTPRequest request(
       HTTPRequest::HTTP_GET,
       uri.getPathAndQuery(),
@@ -46,13 +48,25 @@ namespace TMDb {
     request.add( "Accept", "application/json" );
     request.add( "Accept-Charset", "utf-8" );
     request.add( "Accept-Encoding", "chunked" );
+    request.add( "Content-Type", "application/json" );
+
     mSession->sendRequest( request );
+
     HTTPResponse response;
     std::istream& stream = mSession->receiveResponse( response );
-    wstring body = stringToWide(
-      static_cast<std::stringstream const&>( std::stringstream() << stream.rdbuf() ).str(),
+
+    if ( response.getStatus() >= 400 ) {
+      mSession->reset();
+      throw std::exception( "JSON request failed" );
+    }
+
+    wstring bodyStr = stringToWide(
+      static_cast<stringstream const&>(stringstream()<<stream.rdbuf()).str(),
       CP_UTF8 );
-    wprintf_s( L"%s", body.c_str() );
+
+    json_spirit::wValue bodyVal;
+    json_spirit::read_string_or_throw( bodyStr, bodyVal );
+    return bodyVal;
   }
 
   JSONClient::~JSONClient()

@@ -24,3 +24,7 @@
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/Net/NetException.h>
 #include <Poco/Net/HTTPClientSession.h>
+
+#define JSON_SPIRIT_VALUE_ENABLED
+#include "../json_spirit/reader_template.h"
+#include "../json_spirit/writer_template.h"
