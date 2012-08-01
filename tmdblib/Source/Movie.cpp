@@ -8,7 +8,7 @@ namespace TMDb {
   throw std::exception( "Field does not exist: ##x##" )
 
   Movie::Fields::Fields(): adult( false ), budget( 0 ), id( 0 ),
-    popularity( 0.0f ), revenue( 0 ), runtime( 0 ), voteAverage( 0.0f ),
+    popularity( 0 ), revenue( 0 ), runtime( 0 ), voteAverage( 0.0f ),
     voteCount( 0 ) {}
 
   Movie::Movie()
@@ -75,7 +75,7 @@ namespace TMDb {
     return mFields.overview;
   }
 
-  float Movie::getPopularity()
+  double Movie::getPopularity()
   {
     MOVIE_CHECK_FIELD( field_Popularity );
     return mFields.popularity;
@@ -87,13 +87,13 @@ namespace TMDb {
     return mFields.posterPath;
   }
 
-  const ProductionCompanyMap& Movie::getProductionCompanies()
+  const CompanyMap& Movie::getProductionCompanies()
   {
     MOVIE_CHECK_FIELD( field_ProductionCompanies );
     return mFields.companies;
   }
 
-  const ProductionCountryMap& Movie::getProductionCountries()
+  const CountryMap& Movie::getProductionCountries()
   {
     MOVIE_CHECK_FIELD( field_ProductionCountries );
     return mFields.countries;
@@ -115,6 +115,12 @@ namespace TMDb {
   {
     MOVIE_CHECK_FIELD( field_Runtime );
     return mFields.runtime;
+  }
+
+  const LanguageMap& Movie::getSpokenLanguages()
+  {
+    MOVIE_CHECK_FIELD( field_SpokenLanguages );
+    return mFields.languages;
   }
 
   const wstring& Movie::getTagline()

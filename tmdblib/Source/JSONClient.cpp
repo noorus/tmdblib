@@ -11,17 +11,16 @@ namespace TMDb {
   JSONClient::JSONClient( const wstring& host, unsigned short port ):
   mSession( NULL )
   {
-    mSession = new HTTPClientSession( wideToString( host, CP_UTF8 ), port );
+    mSession = new HTTPClientSession( wideToString( host ), port );
   }
 
   json_spirit::wValue JSONClient::request( const wstring& url )
   {
-    URI uri( wideToString( url, CP_UTF8 ) );
+    URI uri( wideToString( url ) );
 
-    HTTPRequest request(
-      HTTPRequest::HTTP_GET,
-      uri.getPathAndQuery(),
+    HTTPRequest request( HTTPRequest::HTTP_GET, uri.getPathAndQuery(),
       HTTPMessage::HTTP_1_1 );
+
     request.add( "Accept", "application/json" );
     request.add( "Accept-Charset", "utf-8" );
     request.add( "Accept-Encoding", "chunked" );
@@ -32,17 +31,20 @@ namespace TMDb {
     HTTPResponse response;
     std::istream& stream = mSession->receiveResponse( response );
 
-    if ( response.getStatus() != 200 ) {
+    if ( response.getStatus() != 200 )
+    {
       mSession->reset();
-      throw std::exception( static_cast<stringstream const&>( stringstream() << "Bad response to JSON request: HTTP " << response.getStatus() << response.getReason() ).str().c_str() );
+      throw std::exception( static_cast<stringstream const&>(
+        stringstream() << string( "Bad HTTP response to JSON request: " ) <<
+        response.getStatus() << " " << response.getReason() ).str().c_str() );
     }
 
-    wstring bodyStr = stringToWide(
-      static_cast<stringstream const&>(stringstream()<<stream.rdbuf()).str(),
-      CP_UTF8 );
+    wstring bodyStr = stringToWide( static_cast<stringstream const&>(
+      stringstream() << stream.rdbuf() ).str() );
 
     json_spirit::wValue bodyVal;
     json_spirit::read_string_or_throw( bodyStr, bodyVal );
+
     return bodyVal;
   }
 

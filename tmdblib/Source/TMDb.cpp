@@ -53,7 +53,7 @@ namespace TMDb {
   }
 
   void TMDb::readJSONProductionCompany( const js::wValue& jsonCompany,
-  ProductionCompany& company )
+  Company& company )
   {
     const js::wObject& obj = jsonCompany.getObject();
     company.id = obj.find( L"id" )->second.getInt();
@@ -61,11 +61,19 @@ namespace TMDb {
   }
 
   void TMDb::readJSONProductionCountry( const js::wValue& jsonCountry,
-  ProductionCountry& country )
+  Country& country )
   {
     const js::wObject& obj = jsonCountry.getObject();
     country.code = obj.find( L"iso_3166_1" )->second.getString();
     country.name = obj.find( L"name" )->second.getString();
+  }
+
+  void TMDb::readJSONSpokenLanguage( const js::wValue& jsonLanguage,
+  Language& language )
+  {
+    const js::wObject& obj = jsonLanguage.getObject();
+    language.code = obj.find( L"iso_639_1" )->second.getString();
+    language.name = obj.find( L"name" )->second.getString();
   }
 
   void TMDb::readJSONMovie( const js::wValue& jsonMovie, Movie& movie )
@@ -118,7 +126,7 @@ namespace TMDb {
         js::wArray arr = value.getArray();
         for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
         {
-          ProductionCompany company;
+          Company company;
           readJSONProductionCompany( (*it), company );
           movie.mFields.companies[company.id] = company;
         }
@@ -127,7 +135,7 @@ namespace TMDb {
         js::wArray arr = value.getArray();
         for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
         {
-          ProductionCountry country;
+          Country country;
           readJSONProductionCountry( (*it), country );
           movie.mFields.countries[country.code] = country;
         }
@@ -142,6 +150,15 @@ namespace TMDb {
       } else if ( key == L"runtime" ) {
         movie.mFields.runtime = value.getInt();
         movie.mFieldBits[Movie::field_Runtime] = true;
+      } else if ( key == L"spoken_languages" ) {
+        js::wArray arr = value.getArray();
+        for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+        {
+          Language language;
+          readJSONSpokenLanguage( (*it), language );
+          movie.mFields.languages[language.code] = language;
+        }
+        movie.mFieldBits[Movie::field_SpokenLanguages] = true;
       } else if ( key == L"tagline" ) {
         movie.mFields.tagline = value.getString();
         movie.mFieldBits[Movie::field_Tagline] = true;
@@ -149,7 +166,8 @@ namespace TMDb {
         movie.mFields.title = value.getString();
         movie.mFieldBits[Movie::field_Title] = true;
       } else if ( key == L"vote_average" ) {
-        movie.mFields.voteAverage = value.getReal();
+        // round to one decimal
+        movie.mFields.voteAverage = floorf( (float)value.getReal() * 10.0f + 0.5f ) / 10.0f;
         movie.mFieldBits[Movie::field_VoteAverage] = true;
       } else if ( key == L"vote_count" ) {
         movie.mFields.voteCount = value.getInt();

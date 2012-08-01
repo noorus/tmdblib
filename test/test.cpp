@@ -28,13 +28,19 @@ int wmain( int argc, WCHAR* argv[] )
     if ( movie.hasField( TMDb::Movie::field_ProductionCompanies ) )
     {
       wprintf_s( L"Production Companies:\r\n" );
-      for ( TMDb::ProductionCompanyMap::const_iterator it = movie.getProductionCompanies().begin(); it != movie.getProductionCompanies().end(); ++it )
+      for ( TMDb::CompanyMap::const_iterator it = movie.getProductionCompanies().begin(); it != movie.getProductionCompanies().end(); ++it )
         wprintf_s( L"  %d - %s\r\n", (*it).second.id, (*it).second.name.c_str() );
     }
     if ( movie.hasField( TMDb::Movie::field_ProductionCountries ) )
     {
       wprintf_s( L"Production Countries:\r\n" );
-      for ( TMDb::ProductionCountryMap::const_iterator it = movie.getProductionCountries().begin(); it != movie.getProductionCountries().end(); ++it )
+      for ( TMDb::CountryMap::const_iterator it = movie.getProductionCountries().begin(); it != movie.getProductionCountries().end(); ++it )
+        wprintf_s( L"  %s - %s\r\n", (*it).second.code.c_str(), (*it).second.name.c_str() );
+    }
+    if ( movie.hasField( TMDb::Movie::field_SpokenLanguages ) )
+    {
+      wprintf_s( L"Spoken Languages:\r\n" );
+      for ( TMDb::LanguageMap::const_iterator it = movie.getSpokenLanguages().begin(); it != movie.getSpokenLanguages().end(); ++it )
         wprintf_s( L"  %s - %s\r\n", (*it).second.code.c_str(), (*it).second.name.c_str() );
     }
     delete tmdb;

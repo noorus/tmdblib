@@ -70,21 +70,21 @@ namespace TMDb {
 
   typedef map<wstring,Language> LanguageMap;
 
-  struct ProductionCompany {
+  struct Company {
   public:
     int id;
     wstring name;
   };
 
-  typedef map<int,ProductionCompany> ProductionCompanyMap;
+  typedef map<int,Company> CompanyMap;
 
-  struct ProductionCountry {
+  struct Country {
   public:
     wstring code;
     wstring name;
   };
 
-  typedef map<wstring,ProductionCountry> ProductionCountryMap;
+  typedef map<wstring,Country> CountryMap;
 
   class TMDb;
 
@@ -103,13 +103,14 @@ namespace TMDb {
       wstring imdbID;
       wstring originalTitle;
       wstring overview;
-      float popularity;
+      double popularity;
       wstring posterPath;
-      ProductionCompanyMap companies;
-      ProductionCountryMap countries;
+      CompanyMap companies;
+      CountryMap countries;
       date releaseDate;
       uint32_t revenue;
       uint32_t runtime;
+      LanguageMap languages;
       wstring tagline;
       wstring title;
       float voteAverage;
@@ -151,13 +152,14 @@ namespace TMDb {
     const wstring& getIMDbID();
     const wstring& getOriginalTitle();
     const wstring& getOverview();
-    float getPopularity();
+    double getPopularity();
     const wstring& getPosterPath();
-    const ProductionCompanyMap& getProductionCompanies();
-    const ProductionCountryMap& getProductionCountries();
+    const CompanyMap& getProductionCompanies();
+    const CountryMap& getProductionCountries();
     const date& getReleaseDate();
     uint32_t getRevenue();
     uint32_t getRuntime();
+    const LanguageMap& getSpokenLanguages();
     const wstring& getTagline();
     const wstring& getTitle();
     float getVoteAverage();
@@ -188,9 +190,11 @@ namespace TMDb {
     void readJSONMovie( const js::wValue& jsonMovie, Movie& movie );
     void readJSONGenre( const js::wValue& jsonGenre, Genre& genre );
     void readJSONProductionCompany( const js::wValue& jsonCompany,
-      ProductionCompany& company );
+      Company& company );
     void readJSONProductionCountry( const js::wValue& jsonCountry,
-      ProductionCountry& country );
+      Country& country );
+    void readJSONSpokenLanguage( const js::wValue& jsonLanguage,
+      Language& language );
     wstring makeURL( LPCWSTR format, StringMap* query = NULL, ... );
     static const wstring mAPIHost;
   public:
