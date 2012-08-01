@@ -97,6 +97,7 @@ namespace TMDb {
       bool adult;
       wstring backdropPath;
       uint32_t budget;
+      GenreMap genres;
       wstring homepage;
       uint32_t id;
       wstring imdbID;
@@ -142,6 +143,7 @@ namespace TMDb {
     bool isAdult();
     const wstring& getBackdropPath();
     uint32_t getBudget();
+    const GenreMap& getGenres();
     const wstring& getHomepage();
     uint32_t getID();
     const wstring& getIMDbID();
@@ -167,7 +169,7 @@ namespace TMDb {
     Poco::Net::HTTPClientSession* mSession;
   public:
     JSONClient( const wstring& host, unsigned short port );
-    json_spirit::wValue request( const wstring& url );
+    js::wValue request( const wstring& url );
     ~JSONClient();
   };
 
@@ -177,8 +179,9 @@ namespace TMDb {
     Configuration mConfiguration;
     JSONClient* mClient;
     void fetchConfiguration();
-    void readJSONArray( const json_spirit::wValue& val, const wstring& path, StringVector& vec );
-    void readJSONMovie( const json_spirit::wValue& val, Movie& movie );
+    void readJSONArray( const js::wValue& val, const wstring& path, StringVector& vec );
+    void readJSONMovie( const js::wValue& val, Movie& movie );
+    void readJSONGenre( const js::wValue& val, Genre& genre );
     wstring makeURL( LPCWSTR format, StringMap* query = NULL, ... );
     static const wstring mAPIHost;
   public:

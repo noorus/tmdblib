@@ -45,6 +45,13 @@ namespace TMDb {
       vec.push_back( (*it).getString() );
   }
 
+  void TMDb::readJSONGenre( const js::wValue& jsonGenre, Genre& genre )
+  {
+    const js::wObject& obj = jsonGenre.getObject();
+    genre.id = obj.find( L"id" )->second.getInt();
+    genre.name = obj.find( L"name" )->second.getString();
+  }
+
   void TMDb::readJSONMovie( const js::wValue& jsonMovie, Movie& movie )
   {
     const js::wObject& obj = jsonMovie.getObject();
@@ -61,6 +68,15 @@ namespace TMDb {
       } else if ( key == L"budget" ) {
         movie.mFields.budget = value.getInt();
         movie.mFieldBits[Movie::field_Budget] = true;
+      } else if ( key == L"genres" ) {
+        js::wArray arr = value.getArray();
+        for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+        {
+          Genre genre;
+          readJSONGenre( (*it), genre );
+          movie.mFields.genres[genre.id] = genre;
+        }
+        movie.mFieldBits[Movie::field_Genres] = true;
       } else if ( key == L"homepage" ) {
         movie.mFields.homepage = value.getString();
         movie.mFieldBits[Movie::field_Homepage] = true;
