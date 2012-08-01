@@ -2,7 +2,7 @@ tmdblib
 =======
 
 TMDblib is a small API wrapper for accessing [The Movie DB](http://www.themoviedb.org/)'s JSON API from C++ projects.  
-TMDblib is currently Windows-only, and uses wide strings for internal and external text representation, but I'd appreciate any efforts to make it cross-platform. Let me know if you're interested.
+TMDblib is currently Windows-only, and uses wide strings for internal and external text representation.
 
 Usage
 -----
