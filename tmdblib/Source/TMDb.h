@@ -214,7 +214,8 @@ namespace TMDb {
   public:
     explicit TMDb( const wstring& apiKey );
     const Configuration& getConfiguration();
-    Movie getMovie( unsigned int id );
+    Movie getMovie( uint32_t id );
+    Movie getLatestMovie();
     ~TMDb();
   };
 

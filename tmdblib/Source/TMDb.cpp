@@ -226,10 +226,18 @@ namespace TMDb {
     return mConfiguration;
   }
 
-  Movie TMDb::getMovie( unsigned int id )
+  Movie TMDb::getMovie( uint32_t id )
   {
     Movie movie;
     js::wValue jsonMovie = mClient->request( makeURL( L"movie/%d", NULL, id ) );
+    readJSONMovie( jsonMovie, movie );
+    return movie;
+  }
+
+  Movie TMDb::getLatestMovie()
+  {
+    Movie movie;
+    js::wValue jsonMovie = mClient->request( makeURL( L"movie/latest" ) );
     readJSONMovie( jsonMovie, movie );
     return movie;
   }
