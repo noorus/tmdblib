@@ -56,11 +56,11 @@ namespace TMDb {
 
   struct Genre {
   public:
-    int id;
+    uint32_t id;
     wstring name;
   };
 
-  typedef map<int,Genre> GenreMap;
+  typedef map<uint32_t,Genre> GenreMap;
 
   struct Language {
   public:
@@ -72,11 +72,11 @@ namespace TMDb {
 
   struct Company {
   public:
-    int id;
+    uint32_t id;
     wstring name;
   };
 
-  typedef map<int,Company> CompanyMap;
+  typedef map<uint32_t,Company> CompanyMap;
 
   struct Country {
   public:
@@ -85,6 +85,16 @@ namespace TMDb {
   };
 
   typedef map<wstring,Country> CountryMap;
+
+  struct Collection {
+  public:
+    wstring backdropPath;
+    uint32_t id;
+    wstring name;
+    wstring posterPath;
+  };
+
+  typedef map<uint32_t,Collection> CollectionMap;
 
   class TMDb;
 
@@ -97,6 +107,7 @@ namespace TMDb {
       bool adult;
       wstring backdropPath;
       uint32_t budget;
+      CollectionMap collections;
       GenreMap genres;
       wstring homepage;
       uint32_t id;
@@ -146,6 +157,7 @@ namespace TMDb {
     bool isAdult();
     const wstring& getBackdropPath();
     uint32_t getBudget();
+    const CollectionMap& getCollections();
     const GenreMap& getGenres();
     const wstring& getHomepage();
     uint32_t getID();
@@ -195,10 +207,12 @@ namespace TMDb {
       Country& country );
     void readJSONSpokenLanguage( const js::wValue& jsonLanguage,
       Language& language );
+    void readJSONCollection( const js::wValue& jsonCollection,
+      Collection& collection );
     wstring makeURL( LPCWSTR format, StringMap* query = NULL, ... );
     static const wstring mAPIHost;
   public:
-    TMDb( const wstring& apiKey );
+    explicit TMDb( const wstring& apiKey );
     const Configuration& getConfiguration();
     Movie getMovie( unsigned int id );
     ~TMDb();

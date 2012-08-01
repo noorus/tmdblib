@@ -19,6 +19,12 @@ int wmain( int argc, WCHAR* argv[] )
       wprintf_s( L"Title: %s\r\n", movie.getTitle().c_str() );
     if ( movie.hasField( TMDb::Movie::field_Overview ) )
       wprintf_s( L"Overview: %s\r\n", movie.getOverview().c_str() );
+    if ( movie.hasField( TMDb::Movie::field_Collections ) )
+    {
+      wprintf_s( L"In collections:\r\n" );
+      for ( TMDb::CollectionMap::const_iterator it = movie.getCollections().begin(); it != movie.getCollections().end(); ++it )
+        wprintf_s( L"  %d - %s\r\n", (*it).second.id, (*it).second.name.c_str() );
+    }
     if ( movie.hasField( TMDb::Movie::field_Genres ) )
     {
       wprintf_s( L"Genres:\r\n" );

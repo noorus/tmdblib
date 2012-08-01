@@ -39,6 +39,12 @@ namespace TMDb {
     return mFields.budget;
   }
 
+  const CollectionMap& Movie::getCollections()
+  {
+    MOVIE_CHECK_FIELD( field_Collections );
+    return mFields.collections;
+  }
+
   const GenreMap& Movie::getGenres()
   {
     MOVIE_CHECK_FIELD( field_Genres );

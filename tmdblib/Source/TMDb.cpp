@@ -76,19 +76,52 @@ namespace TMDb {
     language.name = obj.find( L"name" )->second.getString();
   }
 
+  void TMDb::readJSONCollection( const js::wValue& jsonCollection,
+  Collection& collection )
+  {
+    const js::wObject& obj = jsonCollection.getObject();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const wstring& key = it->first;
+      const js::wValue& value = it->second;
+
+      if ( value.isNull() )
+        continue;
+
+      if ( key == L"backdrop_path" ) {
+        collection.backdropPath = value.getString();
+      } else if ( key == L"id" ) {
+        collection.id = value.getInt();
+      } else if ( key == L"name" ) {
+        collection.name = value.getString();
+      } else if ( key == L"poster_path" ) {
+        collection.posterPath = value.getString();
+      }
+    }
+  }
+
   void TMDb::readJSONMovie( const js::wValue& jsonMovie, Movie& movie )
   {
     const js::wObject& obj = jsonMovie.getObject();
     for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
     {
-      const std::wstring& key = it->first;
+      const wstring& key = it->first;
       const js::wValue& value = it->second;
+
+      if ( value.isNull() )
+        continue;
+
       if ( key == L"adult" ) {
         movie.mFields.adult = value.getBool();
         movie.mFieldBits[Movie::field_Adult] = true;
       } else if ( key == L"backdrop_path" ) {
         movie.mFields.backdropPath = value.getString();
         movie.mFieldBits[Movie::field_Backdrop] = true;
+      } else if ( key == L"belongs_to_collection" ) {
+        Collection collection;
+        readJSONCollection( value, collection );
+        movie.mFields.collections[collection.id] = collection;
+        movie.mFieldBits[Movie::field_Collections] = true;
       } else if ( key == L"budget" ) {
         movie.mFields.budget = value.getInt();
         movie.mFieldBits[Movie::field_Budget] = true;
