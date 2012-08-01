@@ -105,6 +105,8 @@ namespace TMDb {
       wstring overview;
       float popularity;
       wstring posterPath;
+      ProductionCompanyMap companies;
+      ProductionCountryMap countries;
       date releaseDate;
       uint32_t revenue;
       uint32_t runtime;
@@ -151,6 +153,8 @@ namespace TMDb {
     const wstring& getOverview();
     float getPopularity();
     const wstring& getPosterPath();
+    const ProductionCompanyMap& getProductionCompanies();
+    const ProductionCountryMap& getProductionCountries();
     const date& getReleaseDate();
     uint32_t getRevenue();
     uint32_t getRuntime();
@@ -179,9 +183,14 @@ namespace TMDb {
     Configuration mConfiguration;
     JSONClient* mClient;
     void fetchConfiguration();
-    void readJSONArray( const js::wValue& val, const wstring& path, StringVector& vec );
-    void readJSONMovie( const js::wValue& val, Movie& movie );
-    void readJSONGenre( const js::wValue& val, Genre& genre );
+    void readJSONArray( const js::wValue& jsonArray, const wstring& path,
+      StringVector& vec );
+    void readJSONMovie( const js::wValue& jsonMovie, Movie& movie );
+    void readJSONGenre( const js::wValue& jsonGenre, Genre& genre );
+    void readJSONProductionCompany( const js::wValue& jsonCompany,
+      ProductionCompany& company );
+    void readJSONProductionCountry( const js::wValue& jsonCountry,
+      ProductionCountry& country );
     wstring makeURL( LPCWSTR format, StringMap* query = NULL, ... );
     static const wstring mAPIHost;
   public:

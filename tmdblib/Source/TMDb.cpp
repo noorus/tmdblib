@@ -52,6 +52,22 @@ namespace TMDb {
     genre.name = obj.find( L"name" )->second.getString();
   }
 
+  void TMDb::readJSONProductionCompany( const js::wValue& jsonCompany,
+  ProductionCompany& company )
+  {
+    const js::wObject& obj = jsonCompany.getObject();
+    company.id = obj.find( L"id" )->second.getInt();
+    company.name = obj.find( L"name" )->second.getString();
+  }
+
+  void TMDb::readJSONProductionCountry( const js::wValue& jsonCountry,
+  ProductionCountry& country )
+  {
+    const js::wObject& obj = jsonCountry.getObject();
+    country.code = obj.find( L"iso_3166_1" )->second.getString();
+    country.name = obj.find( L"name" )->second.getString();
+  }
+
   void TMDb::readJSONMovie( const js::wValue& jsonMovie, Movie& movie )
   {
     const js::wObject& obj = jsonMovie.getObject();
@@ -98,6 +114,24 @@ namespace TMDb {
       } else if ( key == L"poster_path" ) {
         movie.mFields.posterPath = value.getString();
         movie.mFieldBits[Movie::field_Poster] = true;
+      } else if ( key == L"production_companies" ) {
+        js::wArray arr = value.getArray();
+        for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+        {
+          ProductionCompany company;
+          readJSONProductionCompany( (*it), company );
+          movie.mFields.companies[company.id] = company;
+        }
+        movie.mFieldBits[Movie::field_ProductionCompanies] = true;
+      } else if ( key == L"production_countries" ) {
+        js::wArray arr = value.getArray();
+        for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+        {
+          ProductionCountry country;
+          readJSONProductionCountry( (*it), country );
+          movie.mFields.countries[country.code] = country;
+        }
+        movie.mFieldBits[Movie::field_ProductionCountries] = true;
       } else if ( key == L"release_date" ) {
         movie.mFields.releaseDate = boost::gregorian::from_simple_string(
           wideToString( value.getString() ) );

@@ -87,6 +87,18 @@ namespace TMDb {
     return mFields.posterPath;
   }
 
+  const ProductionCompanyMap& Movie::getProductionCompanies()
+  {
+    MOVIE_CHECK_FIELD( field_ProductionCompanies );
+    return mFields.companies;
+  }
+
+  const ProductionCountryMap& Movie::getProductionCountries()
+  {
+    MOVIE_CHECK_FIELD( field_ProductionCountries );
+    return mFields.countries;
+  }
+
   const date& Movie::getReleaseDate()
   {
     MOVIE_CHECK_FIELD( field_ReleaseDate );
