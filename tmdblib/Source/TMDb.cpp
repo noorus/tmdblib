@@ -1,11 +1,10 @@
-#include "StdAfx.h"
+#include "TMDbStdAfx.h"
 #include "TMDb.h"
+#include "TMDbUtilities.h"
 
 namespace TMDb {
 
   const wstring TMDb::mAPIHost( L"api.themoviedb.org" );
-
-  namespace js = json_spirit;
 
   TMDb::TMDb( const std::wstring& apiKey ): mAPIKey( apiKey ), mClient( NULL )
   {
@@ -17,7 +16,7 @@ namespace TMDb {
   wstring TMDb::makeURL( LPCWSTR format, StringMap* query, ... )
   {
     va_list va_alist;
-    std::wstring str( 512, NULL );
+    wstring str( 512, NULL );
     va_start( va_alist, format );
     va_arg( va_alist, int ); // Skip query arg
     _vsnwprintf_s( &str[0], 512, 511, format, va_alist );
@@ -46,6 +45,69 @@ namespace TMDb {
       vec.push_back( (*it).getString() );
   }
 
+  void TMDb::readJSONMovie( const js::wValue& jsonMovie, Movie& movie )
+  {
+    const js::wObject& obj = jsonMovie.getObject();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const std::wstring& key = it->first;
+      const js::wValue& value = it->second;
+      if ( key == L"adult" ) {
+        movie.mFields.adult = value.getBool();
+        movie.mFieldBits[Movie::field_Adult] = true;
+      } else if ( key == L"backdrop_path" ) {
+        movie.mFields.backdropPath = value.getString();
+        movie.mFieldBits[Movie::field_Backdrop] = true;
+      } else if ( key == L"budget" ) {
+        movie.mFields.budget = value.getInt();
+        movie.mFieldBits[Movie::field_Budget] = true;
+      } else if ( key == L"homepage" ) {
+        movie.mFields.homepage = value.getString();
+        movie.mFieldBits[Movie::field_Homepage] = true;
+      } else if ( key == L"id" ) {
+        movie.mFields.id = value.getInt();
+        movie.mFieldBits[Movie::field_ID] = true;
+      } else if ( key == L"imdb_id" ) {
+        movie.mFields.imdbID = value.getString();
+        movie.mFieldBits[Movie::field_IMDbID] = true;
+      } else if ( key == L"original_title" ) {
+        movie.mFields.originalTitle = value.getString();
+        movie.mFieldBits[Movie::field_OriginalTitle] = true;
+      } else if ( key == L"overview" ) {
+        movie.mFields.overview = value.getString();
+        movie.mFieldBits[Movie::field_Overview] = true;
+      } else if ( key == L"popularity" ) {
+        movie.mFields.popularity = value.getReal();
+        movie.mFieldBits[Movie::field_Popularity] = true;
+      } else if ( key == L"poster_path" ) {
+        movie.mFields.posterPath = value.getString();
+        movie.mFieldBits[Movie::field_Poster] = true;
+      } else if ( key == L"release_date" ) {
+        movie.mFields.releaseDate = boost::gregorian::from_simple_string(
+          wideToString( value.getString() ) );
+        movie.mFieldBits[Movie::field_ReleaseDate] = true;
+      } else if ( key == L"revenue" ) {
+        movie.mFields.revenue = value.getInt();
+        movie.mFieldBits[Movie::field_Revenue] = true;
+      } else if ( key == L"runtime" ) {
+        movie.mFields.runtime = value.getInt();
+        movie.mFieldBits[Movie::field_Runtime] = true;
+      } else if ( key == L"tagline" ) {
+        movie.mFields.tagline = value.getString();
+        movie.mFieldBits[Movie::field_Tagline] = true;
+      } else if ( key == L"title" ) {
+        movie.mFields.title = value.getString();
+        movie.mFieldBits[Movie::field_Title] = true;
+      } else if ( key == L"vote_average" ) {
+        movie.mFields.voteAverage = value.getReal();
+        movie.mFieldBits[Movie::field_VoteAverage] = true;
+      } else if ( key == L"vote_count" ) {
+        movie.mFields.voteCount = value.getInt();
+        movie.mFieldBits[Movie::field_VoteCount] = true;
+      }
+    }
+  }
+
   void TMDb::fetchConfiguration()
   {
     js::wValue val = mClient->request( makeURL( L"configuration" ) );
@@ -63,11 +125,12 @@ namespace TMDb {
     return mConfiguration;
   }
 
-  const Movie& TMDb::getMovie( unsigned int id )
+  Movie TMDb::getMovie( unsigned int id )
   {
-    //js::wValue val = mClient->request( makeURL( L"movie/%d", NULL, id ) );
-    wprintf_s( L"%s\r\n", makeURL( L"movie/%d", NULL, id ).c_str() );
-    return Movie();
+    Movie movie;
+    js::wValue jsonMovie = mClient->request( makeURL( L"movie/%d", NULL, id ) );
+    readJSONMovie( jsonMovie, movie );
+    return movie;
   }
 
   TMDb::~TMDb()

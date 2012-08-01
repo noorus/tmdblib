@@ -46,6 +46,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="TMDbStdAfx.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -112,8 +113,9 @@
 				EnableFunctionLevelLinking="true"
 				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="TMDbStdAfx.h"
 				WarningLevel="3"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -158,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Movie.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\StdAfx.cpp"
 				>
 				<FileConfiguration
@@ -181,6 +187,10 @@
 				RelativePath=".\Source\TMDb.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Source\Utilities.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -188,15 +198,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Source\StdAfx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TargetVer.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Source\TMDb.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TMDbStdAfx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TMDbTargetVer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TMDbUtilities.h"
 				>
 			</File>
 		</Filter>
