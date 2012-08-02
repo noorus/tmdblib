@@ -45,6 +45,9 @@ namespace TMDb {
   
   namespace js = json_spirit;
 
+  class TMDb;
+  class Movie;
+
   struct Configuration {
   public:
     wstring baseURL;
@@ -96,7 +99,16 @@ namespace TMDb {
 
   typedef map<uint32_t,Collection> CollectionMap;
 
-  class TMDb;
+  template<class T>
+  class PagedResults {
+  public:
+    vector<T> results;
+    uint32_t page;
+    uint32_t totalPages;
+    uint32_t totalResults;
+  };
+
+  typedef PagedResults<Movie> PagedMovieResults;
 
   class Movie {
   friend class TMDb;
@@ -209,13 +221,16 @@ namespace TMDb {
       Language& language );
     void readJSONCollection( const js::wValue& jsonCollection,
       Collection& collection );
-    wstring makeURL( LPCWSTR format, StringMap* query = NULL, ... );
+    void readJSONPagedMovieResults( const js::wValue& jsonResults,
+      PagedMovieResults& results );
+    wstring makeURL( const wstring& method, StringMap* query = NULL );
     static const wstring mAPIHost;
   public:
     explicit TMDb( const wstring& apiKey );
     const Configuration& getConfiguration();
     Movie getMovie( uint32_t id );
     Movie getLatestMovie();
+    PagedMovieResults getUpcomingMovies( uint32_t page = 1 );
     ~TMDb();
   };
 

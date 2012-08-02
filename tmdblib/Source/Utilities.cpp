@@ -32,4 +32,14 @@ namespace TMDb {
     return result;
   }
 
+  wstring widePrintf( LPCWSTR format, ... )
+  {
+    WCHAR str[512];
+    va_list va_alist;
+    va_start( va_alist, format );
+    _vsnwprintf_s( str, 512, 511, format, va_alist );
+    va_end( va_alist );
+    return str;
+  }
+
 }

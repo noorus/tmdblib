@@ -13,19 +13,12 @@ namespace TMDb {
     fetchConfiguration();
   }
 
-  wstring TMDb::makeURL( LPCWSTR format, StringMap* query, ... )
+  wstring TMDb::makeURL( const wstring& method, StringMap* query )
   {
-    va_list va_alist;
-    wstring str( 512, NULL );
-    va_start( va_alist, format );
-    va_arg( va_alist, int ); // Skip query arg
-    _vsnwprintf_s( &str[0], 512, 511, format, va_alist );
-    va_end( va_alist );
-
     wstring url( 512, NULL );
-    swprintf_s( &url[0], 512, L"http://%s/3/%s?api_key=%s",
-      mAPIHost.c_str(), str.c_str(), mAPIKey.c_str() );
-
+    int len = swprintf_s( &url[0], 512, L"http://%s/3/%s?api_key=%s",
+      mAPIHost.c_str(), method.c_str(), mAPIKey.c_str() );
+    url.resize( len );
     if ( query )
       for ( StringMap::const_iterator it = query->begin(); it != query->end(); ++it )
       {
@@ -98,6 +91,22 @@ namespace TMDb {
         collection.posterPath = value.getString();
       }
     }
+  }
+
+  void TMDb::readJSONPagedMovieResults( const js::wValue& jsonResults,
+  PagedMovieResults& results )
+  {
+    const js::wObject& obj = jsonResults.getObject();
+    results.page = obj.find( L"page" )->second.getInt();
+    js::wArray arr = obj.find( L"results" )->second.getArray();
+    for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+    {
+      Movie movie;
+      readJSONMovie( (*it), movie );
+      results.results.push_back( movie );
+    }
+    results.totalPages = obj.find( L"total_pages" )->second.getInt();
+    results.totalResults = obj.find( L"total_results" )->second.getInt();
   }
 
   void TMDb::readJSONMovie( const js::wValue& jsonMovie, Movie& movie )
@@ -229,7 +238,7 @@ namespace TMDb {
   Movie TMDb::getMovie( uint32_t id )
   {
     Movie movie;
-    js::wValue jsonMovie = mClient->request( makeURL( L"movie/%d", NULL, id ) );
+    js::wValue jsonMovie = mClient->request( makeURL( widePrintf( L"movie/%d", id ) ) );
     readJSONMovie( jsonMovie, movie );
     return movie;
   }
@@ -240,6 +249,17 @@ namespace TMDb {
     js::wValue jsonMovie = mClient->request( makeURL( L"movie/latest" ) );
     readJSONMovie( jsonMovie, movie );
     return movie;
+  }
+
+  PagedMovieResults TMDb::getUpcomingMovies( uint32_t page )
+  {
+    PagedMovieResults results;
+    StringMap qry;
+    if ( page > 1 )
+      qry[L"page"] = static_cast<std::wstringstream const&>( std::wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL( L"movie/upcoming", &qry ) );
+    readJSONPagedMovieResults( jsonResults, results );
+    return results;
   }
 
   TMDb::~TMDb()
