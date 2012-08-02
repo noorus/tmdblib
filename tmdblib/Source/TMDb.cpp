@@ -251,13 +251,35 @@ namespace TMDb {
     return movie;
   }
 
-  PagedMovieResults TMDb::getUpcomingMovies( uint32_t page )
+  PagedMovieResults TMDb::getUpcomingMovies( uint32_t page /* = 1 */ )
   {
     PagedMovieResults results;
     StringMap qry;
     if ( page > 1 )
-      qry[L"page"] = static_cast<std::wstringstream const&>( std::wstringstream() << page ).str();
+      qry[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
     js::wValue jsonResults = mClient->request( makeURL( L"movie/upcoming", &qry ) );
+    readJSONPagedMovieResults( jsonResults, results );
+    return results;
+  }
+
+  PagedMovieResults TMDb::getNowPlayingMovies( uint32_t page /* = 1 */ )
+  {
+    PagedMovieResults results;
+    StringMap qry;
+    if ( page > 1 )
+      qry[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL( L"movie/now_playing", &qry ) );
+    readJSONPagedMovieResults( jsonResults, results );
+    return results;
+  }
+
+  PagedMovieResults TMDb::getPopularMovies( uint32_t page /* = 1 */ )
+  {
+    PagedMovieResults results;
+    StringMap qry;
+    if ( page > 1 )
+      qry[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL( L"movie/popular", &qry ) );
     readJSONPagedMovieResults( jsonResults, results );
     return results;
   }

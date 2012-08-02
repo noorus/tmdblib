@@ -37,6 +37,8 @@ namespace TMDb {
   using std::pair;
   using std::map;
   using std::bitset;
+  using std::stringstream;
+  using std::wstringstream;
 
   using boost::gregorian::date;
 
@@ -231,6 +233,8 @@ namespace TMDb {
     Movie getMovie( uint32_t id );
     Movie getLatestMovie();
     PagedMovieResults getUpcomingMovies( uint32_t page = 1 );
+    PagedMovieResults getNowPlayingMovies( uint32_t page = 1 );
+    PagedMovieResults getPopularMovies( uint32_t page = 1 );
     ~TMDb();
   };
 
