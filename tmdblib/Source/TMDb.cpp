@@ -321,6 +321,14 @@ namespace TMDb {
     return results;
   }
 
+  Company TMDb::getCompany( uint32_t id )
+  {
+    Company company;
+    js::wValue jsonCompany = mClient->request( makeURL( widePrintf( L"company/%d", id ) ) );
+    readJSONProductionCompany( jsonCompany, company );
+    return company;
+  }
+
   TMDb::~TMDb()
   {
     if ( mClient )
