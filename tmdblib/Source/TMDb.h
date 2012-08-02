@@ -76,9 +76,37 @@ namespace TMDb {
   typedef map<wstring,Language> LanguageMap;
 
   struct Company {
+  friend class TMDb;
+  friend class Movie;
+  protected:
+    bitset<7> mFieldBits;
+    struct Fields {
+      wstring description;
+      wstring headquarters;
+      wstring homepage;
+      uint32_t id;
+      wstring logoPath;
+      wstring name;
+      // todo: parent company, is it an ID or what?
+    } mFields;
   public:
-    uint32_t id;
-    wstring name;
+    Company();
+    enum FieldBits: int {
+      field_Description = 0,
+      field_Headquarters,
+      field_Homepage,
+      field_ID,
+      field_LogoPath,
+      field_Name,
+      field_ParentCompany
+    };
+    bool hasField( FieldBits field ) const;
+    const wstring& getDescription() const;
+    const wstring& getHeadquarters() const;
+    const wstring& getHomepage() const;
+    uint32_t getID() const;
+    const wstring& getLogoPath() const;
+    const wstring& getName() const;
   };
 
   typedef map<uint32_t,Company> CompanyMap;
@@ -140,7 +168,6 @@ namespace TMDb {
       wstring title;
       float voteAverage;
       uint32_t voteCount;
-      Fields();
     } mFields;
   public:
     enum FieldBits: int {
@@ -167,29 +194,29 @@ namespace TMDb {
       field_VoteAverage,
       field_VoteCount
     };
-    bool hasField( FieldBits field );
-    bool isAdult();
-    const wstring& getBackdropPath();
-    uint32_t getBudget();
-    const CollectionMap& getCollections();
-    const GenreMap& getGenres();
-    const wstring& getHomepage();
-    uint32_t getID();
-    const wstring& getIMDbID();
-    const wstring& getOriginalTitle();
-    const wstring& getOverview();
-    double getPopularity();
-    const wstring& getPosterPath();
-    const CompanyMap& getProductionCompanies();
-    const CountryMap& getProductionCountries();
-    const date& getReleaseDate();
-    uint32_t getRevenue();
-    uint32_t getRuntime();
-    const LanguageMap& getSpokenLanguages();
-    const wstring& getTagline();
-    const wstring& getTitle();
-    float getVoteAverage();
-    uint32_t getVoteCount();
+    bool hasField( FieldBits field ) const;
+    bool isAdult() const;
+    const wstring& getBackdropPath() const;
+    uint32_t getBudget() const;
+    const CollectionMap& getCollections() const;
+    const GenreMap& getGenres() const;
+    const wstring& getHomepage() const;
+    uint32_t getID() const;
+    const wstring& getIMDbID() const;
+    const wstring& getOriginalTitle() const;
+    const wstring& getOverview() const;
+    double getPopularity() const;
+    const wstring& getPosterPath() const;
+    const CompanyMap& getProductionCompanies() const;
+    const CountryMap& getProductionCountries() const;
+    const date& getReleaseDate() const;
+    uint32_t getRevenue() const;
+    uint32_t getRuntime() const;
+    const LanguageMap& getSpokenLanguages() const;
+    const wstring& getTagline() const;
+    const wstring& getTitle() const;
+    float getVoteAverage() const;
+    uint32_t getVoteCount() const;
   };
 
   class Exception: public std::exception {

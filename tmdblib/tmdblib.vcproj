@@ -156,6 +156,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Source\Company.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\JSONClient.cpp"
 				>
 			</File>

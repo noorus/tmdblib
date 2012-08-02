@@ -49,8 +49,34 @@ namespace TMDb {
   Company& company )
   {
     const js::wObject& obj = jsonCompany.getObject();
-    company.id = obj.find( L"id" )->second.getInt();
-    company.name = obj.find( L"name" )->second.getString();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const wstring& key = it->first;
+      const js::wValue& value = it->second;
+
+      if ( value.isNull() )
+        continue;
+
+      if ( key == L"description" ) {
+        company.mFields.description = value.getString();
+        company.mFieldBits[Company::field_Description] = true;
+      } else if ( key == L"headquarters" ) {
+        company.mFields.headquarters = value.getString();
+        company.mFieldBits[Company::field_Headquarters] = true;
+      } else if ( key == L"homepage" ) {
+        company.mFields.homepage = value.getString();
+        company.mFieldBits[Company::field_Homepage] = true;
+      } else if ( key == L"id" ) {
+        company.mFields.id = value.getInt();
+        company.mFieldBits[Company::field_ID] = true;
+      } else if ( key == L"logo_path" ) {
+        company.mFields.logoPath = value.getString();
+        company.mFieldBits[Company::field_LogoPath] = true;
+      } else if ( key == L"name" ) {
+        company.mFields.name = value.getString();
+        company.mFieldBits[Company::field_Name] = true;
+      }
+    }
   }
 
   void TMDb::readJSONProductionCountry( const js::wValue& jsonCountry,
@@ -170,7 +196,7 @@ namespace TMDb {
         {
           Company company;
           readJSONProductionCompany( (*it), company );
-          movie.mFields.companies[company.id] = company;
+          movie.mFields.companies[company.getID()] = company;
         }
         movie.mFieldBits[Movie::field_ProductionCompanies] = true;
       } else if ( key == L"production_countries" ) {
