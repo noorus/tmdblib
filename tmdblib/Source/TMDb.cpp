@@ -284,6 +284,17 @@ namespace TMDb {
     return results;
   }
 
+  PagedMovieResults TMDb::getTopRatedMovies( uint32_t page /* = 1 */ )
+  {
+    PagedMovieResults results;
+    StringMap qry;
+    if ( page > 1 )
+      qry[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL( L"movie/top_rated", &qry ) );
+    readJSONPagedMovieResults( jsonResults, results );
+    return results;
+  }
+
   TMDb::~TMDb()
   {
     if ( mClient )

@@ -235,6 +235,7 @@ namespace TMDb {
     PagedMovieResults getUpcomingMovies( uint32_t page = 1 );
     PagedMovieResults getNowPlayingMovies( uint32_t page = 1 );
     PagedMovieResults getPopularMovies( uint32_t page = 1 );
+    PagedMovieResults getTopRatedMovies( uint32_t page = 1 );
     ~TMDb();
   };
 
