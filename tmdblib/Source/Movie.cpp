@@ -5,7 +5,7 @@
 namespace TMDb {
 
 # define MOVIE_CHECK_FIELD(x) if ( !mFieldBits[##x##] )\
-  throw std::exception( "Field does not exist: ##x##" )
+  throw std::exception( "Field does not exist: " #x )
 
   Movie::Movie()
   {

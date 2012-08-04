@@ -5,7 +5,7 @@
 namespace TMDb {
 
 # define COMPANY_CHECK_FIELD(x) if ( !mFieldBits[##x##] )\
-  throw std::exception( "Field does not exist: ##x##" )
+  throw std::exception( "Field does not exist: " #x )
 
   Company::Company()
   {
