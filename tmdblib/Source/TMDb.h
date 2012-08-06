@@ -139,6 +139,7 @@ namespace TMDb {
   };
 
   typedef PagedResults<Movie> PagedMovieResults;
+  typedef PagedResults<Company> PagedCompanyResults;
 
   class Movie {
   friend class TMDb;
@@ -252,6 +253,8 @@ namespace TMDb {
       Collection& collection );
     void readJSONPagedMovieResults( const js::wValue& jsonResults,
       PagedMovieResults& results );
+    void readJSONPagedCompanyResults( const js::wValue& jsonResults,
+      PagedCompanyResults& results );
     wstring makeURL( const wstring& method, StringMap* query = NULL );
     static const wstring mAPIHost;
   public:
@@ -272,6 +275,7 @@ namespace TMDb {
     // Search
     PagedMovieResults searchMovies( const wstring& query, bool adult = true,
       uint32_t year = 0, uint32_t page = 1 );
+    PagedCompanyResults searchCompanies( const wstring& query, uint32_t page = 1 );
   };
 
 }
