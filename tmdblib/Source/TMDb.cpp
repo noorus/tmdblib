@@ -234,8 +234,7 @@ namespace TMDb {
         movie.mFields.title = value.getString();
         movie.mFieldBits[Movie::field_Title] = true;
       } else if ( key == L"vote_average" ) {
-        // round to one decimal
-        movie.mFields.voteAverage = floorf( (float)value.getReal() * 10.0f + 0.5f ) / 10.0f;
+        movie.mFields.voteAverage = (float)value.getReal();
         movie.mFieldBits[Movie::field_VoteAverage] = true;
       } else if ( key == L"vote_count" ) {
         movie.mFields.voteCount = value.getInt();
@@ -264,7 +263,8 @@ namespace TMDb {
   Movie TMDb::getMovie( uint32_t id )
   {
     Movie movie;
-    js::wValue jsonMovie = mClient->request( makeURL( widePrintf( L"movie/%d", id ) ) );
+    js::wValue jsonMovie = mClient->request( makeURL(
+      widePrintf( L"movie/%d", id ) ) );
     readJSONMovie( jsonMovie, movie );
     return movie;
   }
@@ -282,8 +282,10 @@ namespace TMDb {
     PagedMovieResults results;
     StringMap query;
     if ( page > 1 )
-      query[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
-    js::wValue jsonResults = mClient->request( makeURL( L"movie/upcoming", &query ) );
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      L"movie/upcoming", &query ) );
     readJSONPagedMovieResults( jsonResults, results );
     return results;
   }
@@ -293,8 +295,10 @@ namespace TMDb {
     PagedMovieResults results;
     StringMap query;
     if ( page > 1 )
-      query[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
-    js::wValue jsonResults = mClient->request( makeURL( L"movie/now_playing", &query ) );
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      L"movie/now_playing", &query ) );
     readJSONPagedMovieResults( jsonResults, results );
     return results;
   }
@@ -304,8 +308,10 @@ namespace TMDb {
     PagedMovieResults results;
     StringMap query;
     if ( page > 1 )
-      query[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
-    js::wValue jsonResults = mClient->request( makeURL( L"movie/popular", &query ) );
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      L"movie/popular", &query ) );
     readJSONPagedMovieResults( jsonResults, results );
     return results;
   }
@@ -315,8 +321,10 @@ namespace TMDb {
     PagedMovieResults results;
     StringMap query;
     if ( page > 1 )
-      query[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
-    js::wValue jsonResults = mClient->request( makeURL( L"movie/top_rated", &query ) );
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      L"movie/top_rated", &query ) );
     readJSONPagedMovieResults( jsonResults, results );
     return results;
   }
@@ -326,16 +334,38 @@ namespace TMDb {
     PagedMovieResults results;
     StringMap query;
     if ( page > 1 )
-      query[L"page"] = static_cast<wstringstream const&>( wstringstream() << page ).str();
-    js::wValue jsonResults = mClient->request( makeURL( widePrintf( L"company/%d/movies", company ), &query ) );
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      widePrintf( L"company/%d/movies", company ), &query ) );
     readJSONPagedMovieResults( jsonResults, results );
     return results; 
+  }
+
+  PagedMovieResults TMDb::searchMovies( const wstring& _query,
+  bool adult, uint32_t year, uint32_t page )
+  {
+    PagedMovieResults results;
+    StringMap query;
+    query[L"query"] = _query;
+    query[L"include_adult"] = adult ? L"true" : L"false";
+    if ( year > 0 )
+      query[L"year"] = static_cast<wstringstream const&>(
+      wstringstream() << year ).str();
+    if ( page > 1 )
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      L"search/movie", &query ) );
+    readJSONPagedMovieResults( jsonResults, results );
+    return results;
   }
 
   Company TMDb::getCompany( uint32_t id )
   {
     Company company;
-    js::wValue jsonCompany = mClient->request( makeURL( widePrintf( L"company/%d", id ) ) );
+    js::wValue jsonCompany = mClient->request( makeURL(
+      widePrintf( L"company/%d", id ) ) );
     readJSONProductionCompany( jsonCompany, company );
     return company;
   }

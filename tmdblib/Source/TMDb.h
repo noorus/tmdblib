@@ -269,6 +269,9 @@ namespace TMDb {
     PagedMovieResults getCompanyMovies( uint32_t company, uint32_t page = 1 );
     // Companies
     Company getCompany( uint32_t id );
+    // Search
+    PagedMovieResults searchMovies( const wstring& query, bool adult = true,
+      uint32_t year = 0, uint32_t page = 1 );
   };
 
 }
