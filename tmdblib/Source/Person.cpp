@@ -41,7 +41,7 @@ namespace TMDb {
     return mFields.deathday;
   }
 
-  const wstring&Person:: getHomepage() const
+  const wstring& Person::getHomepage() const
   {
     PERSON_CHECK_FIELD( field_Homepage );
     return mFields.homepage;
