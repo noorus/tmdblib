@@ -160,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Exception.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\JSONClient.cpp"
 				>
 			</File>

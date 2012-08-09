@@ -34,7 +34,7 @@ namespace TMDb {
     if ( response.getStatus() != 200 )
     {
       mSession->reset();
-      throw std::exception( static_cast<stringstream const&>(
+      throw Exception( static_cast<stringstream const&>(
         stringstream() << string( "Bad HTTP response to JSON request: " ) <<
         response.getStatus() << " " << response.getReason() ).str().c_str() );
     }

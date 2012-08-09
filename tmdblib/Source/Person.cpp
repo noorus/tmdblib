@@ -5,7 +5,7 @@
 namespace TMDb {
 
 # define PERSON_CHECK_FIELD(x) if ( !mFieldBits[##x##] )\
-  throw std::exception( "Field does not exist: " #x )
+  throw Exception( "Field does not exist in person: " #x )
 
   Person::Person()
   {

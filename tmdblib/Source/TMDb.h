@@ -263,8 +263,9 @@ namespace TMDb {
     uint32_t getVoteCount() const;
   };
 
-  class Exception: public std::exception {
-    //
+  class Exception: public std::runtime_error {
+  public:
+    Exception( const std::string& msg );
   };
 
   class JSONClient {

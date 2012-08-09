@@ -13,7 +13,7 @@ namespace TMDb {
     int length = WideCharToMultiByte( codepage, NULL,
       str.c_str(), -1, NULL, NULL, NULL, FALSE );
     if ( length == 0 )
-      throw std::exception( "String conversion failed" );
+      throw Exception( "String conversion failed" );
     string result( length - 1, NULL );
     WideCharToMultiByte( codepage, NULL, str.c_str(), -1,
       &result[0], length, NULL, FALSE );
@@ -25,7 +25,7 @@ namespace TMDb {
     int length = MultiByteToWideChar( codepage, NULL,
       str.c_str(), -1, NULL, NULL );
     if ( length == 0 )
-      throw std::exception( "String conversion failed" );
+      throw Exception( "String conversion failed" );
     wstring result( length - 1, NULL );
     MultiByteToWideChar( codepage, NULL, str.c_str(), -1,
       &result[0], length );
