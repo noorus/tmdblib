@@ -75,7 +75,49 @@ namespace TMDb {
 
   typedef map<wstring,Language> LanguageMap;
 
-  struct Company {
+  class Person {
+  friend class TMDb;
+  protected:
+    bitset<10> mFieldBits;
+    struct Fields {
+      bool adult;
+      // todo: also known as
+      wstring biography;
+      date birthday;
+      date deathday;
+      wstring homepage;
+      uint32_t id;
+      wstring name;
+      wstring placeOfBirth;
+      wstring profilePath;
+    } mFields;
+  public:
+    Person();
+    enum FieldBits: int {
+      field_Adult = 0,
+      field_AlsoKnownAs,
+      field_Biography,
+      field_Birthday,
+      field_Deathday,
+      field_Homepage,
+      field_ID,
+      field_Name,
+      field_PlaceOfBirth,
+      field_ProfilePath
+    };
+    bool hasField( FieldBits field ) const;
+    bool isAdult() const;
+    const wstring& getBiography() const;
+    const date& getBirthday() const;
+    const date& getDeathday() const;
+    const wstring& getHomepage() const;
+    uint32_t getID() const;
+    const wstring& getName() const;
+    const wstring& getPlaceOfBirth() const;
+    const wstring& getProfilePath() const;
+  };
+
+  class Company {
   friend class TMDb;
   friend class Movie;
   protected:
@@ -140,6 +182,7 @@ namespace TMDb {
 
   typedef PagedResults<Movie> PagedMovieResults;
   typedef PagedResults<Company> PagedCompanyResults;
+  typedef PagedResults<Person> PagedPersonResults;
 
   class Movie {
   friend class TMDb;
@@ -243,6 +286,7 @@ namespace TMDb {
       StringVector& vec );
     void readJSONMovie( const js::wValue& jsonMovie, Movie& movie );
     void readJSONGenre( const js::wValue& jsonGenre, Genre& genre );
+    void readJSONPerson( const js::wValue& jsonPerson, Person& person );
     void readJSONProductionCompany( const js::wValue& jsonCompany,
       Company& company );
     void readJSONProductionCountry( const js::wValue& jsonCountry,
@@ -255,6 +299,8 @@ namespace TMDb {
       PagedMovieResults& results );
     void readJSONPagedCompanyResults( const js::wValue& jsonResults,
       PagedCompanyResults& results );
+    void readJSONPagedPersonResults( const js::wValue& jsonResults,
+      PagedPersonResults& results );
     wstring makeURL( const wstring& method, StringMap* query = NULL );
     static const wstring mAPIHost;
   public:
@@ -276,6 +322,7 @@ namespace TMDb {
     PagedMovieResults searchMovies( const wstring& query, bool adult = true,
       uint32_t year = 0, uint32_t page = 1 );
     PagedCompanyResults searchCompanies( const wstring& query, uint32_t page = 1 );
+    PagedPersonResults searchPeople( const wstring& query, uint32_t page = 1 );
   };
 
 }

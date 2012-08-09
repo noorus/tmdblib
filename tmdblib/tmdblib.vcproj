@@ -168,6 +168,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Person.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\StdAfx.cpp"
 				>
 				<FileConfiguration

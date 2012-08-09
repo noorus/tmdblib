@@ -45,6 +45,52 @@ namespace TMDb {
     genre.name = obj.find( L"name" )->second.getString();
   }
 
+  void TMDb::readJSONPerson( const js::wValue& jsonPerson, Person& person )
+  {
+    const js::wObject& obj = jsonPerson.getObject();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const wstring& key = it->first;
+      const js::wValue& value = it->second;
+      
+      if ( value.isNull() )
+        continue;
+
+      if ( key == L"adult" ) {
+        person.mFields.adult = value.getBool();
+        person.mFieldBits[Person::field_Adult] = true;
+      } else if ( key == L"also_known_as" ) {
+        // Todo
+      } else if ( key == L"biography" ) {
+        person.mFields.biography = value.getString();
+        person.mFieldBits[Person::field_Biography] = true;
+      } else if ( key == L"birthday" ) {
+        person.mFields.birthday = boost::gregorian::from_simple_string(
+          wideToString( value.getString() ) );
+        person.mFieldBits[Person::field_Birthday] = true;
+      } else if ( key == L"deathday" ) {
+        person.mFields.deathday = boost::gregorian::from_simple_string(
+          wideToString( value.getString() ) );
+        person.mFieldBits[Person::field_Deathday] = true;
+      } else if ( key == L"homepage" ) {
+        person.mFields.homepage = value.getString();
+        person.mFieldBits[Person::field_Homepage] = true;
+      } else if ( key == L"id" ) {
+        person.mFields.id = value.getInt();
+        person.mFieldBits[Person::field_ID] = true;
+      } else if ( key == L"name" ) {
+        person.mFields.name = value.getString();
+        person.mFieldBits[Person::field_Name] = true;
+      } else if ( key == L"place_of_birth" ) {
+        person.mFields.placeOfBirth = value.getString();
+        person.mFieldBits[Person::field_PlaceOfBirth] = true;
+      } else if ( key == L"profile_path" ) {
+        person.mFields.profilePath = value.getString();
+        person.mFieldBits[Person::field_ProfilePath] = true;
+      }
+    }
+  }
+
   void TMDb::readJSONProductionCompany( const js::wValue& jsonCompany,
   Company& company )
   {
@@ -146,6 +192,22 @@ namespace TMDb {
       Company company;
       readJSONProductionCompany( (*it), company );
       results.results.push_back( company );
+    }
+    results.totalPages = obj.find( L"total_pages" )->second.getInt();
+    results.totalResults = obj.find( L"total_results" )->second.getInt();
+  }
+
+  void TMDb::readJSONPagedPersonResults( const js::wValue& jsonResults,
+  PagedPersonResults& results )
+  {
+    const js::wObject& obj = jsonResults.getObject();
+    results.page = obj.find( L"page" )->second.getInt();
+    js::wArray arr = obj.find( L"results" )->second.getArray();
+    for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+    {
+      Person person;
+      readJSONPerson( (*it), person );
+      results.results.push_back( person );
     }
     results.totalPages = obj.find( L"total_pages" )->second.getInt();
     results.totalResults = obj.find( L"total_results" )->second.getInt();
@@ -389,6 +451,21 @@ namespace TMDb {
     js::wValue jsonResults = mClient->request( makeURL(
       L"search/company", &query ) );
     readJSONPagedCompanyResults( jsonResults, results );
+    return results;
+  }
+
+  PagedPersonResults TMDb::searchPeople( const wstring& _query,
+  uint32_t page )
+  {
+    PagedPersonResults results;
+    StringMap query;
+    query[L"query"] = _query;
+    if ( page > 1 )
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      L"search/person", &query ) );
+    readJSONPagedPersonResults( jsonResults, results );
     return results;
   }
 
