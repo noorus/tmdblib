@@ -317,8 +317,9 @@ namespace TMDb {
     PagedMovieResults getPopularMovies( uint32_t page = 1 );
     PagedMovieResults getTopRatedMovies( uint32_t page = 1 );
     PagedMovieResults getCompanyMovies( uint32_t company, uint32_t page = 1 );
+    PagedMovieResults getCompanyMovies( const Company& company, uint32_t page = 1 );
     PagedMovieResults getGenreMovies( uint32_t genre, uint32_t page = 1 );
-    PagedMovieResults getGenreMovies( Genre genre, uint32_t page = 1 );
+    PagedMovieResults getGenreMovies( const Genre& genre, uint32_t page = 1 );
     // Companies
     Company getCompany( uint32_t id );
     // Search

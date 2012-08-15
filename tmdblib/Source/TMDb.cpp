@@ -420,6 +420,11 @@ namespace TMDb {
     return results; 
   }
 
+  PagedMovieResults TMDb::getCompanyMovies( const Company& company, uint32_t page )
+  {
+    return getCompanyMovies( company.getID() );
+  }
+
   PagedMovieResults TMDb::getGenreMovies( uint32_t genre, uint32_t page )
   {
     PagedMovieResults results;
@@ -433,7 +438,7 @@ namespace TMDb {
     return results; 
   }
 
-  PagedMovieResults TMDb::getGenreMovies( Genre genre, uint32_t page )
+  PagedMovieResults TMDb::getGenreMovies( const Genre& genre, uint32_t page )
   {
     return getGenreMovies( genre.id, page );
   }
