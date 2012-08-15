@@ -420,6 +420,24 @@ namespace TMDb {
     return results; 
   }
 
+  PagedMovieResults TMDb::getGenreMovies( uint32_t genre, uint32_t page )
+  {
+    PagedMovieResults results;
+    StringMap query;
+    if ( page > 1 )
+      query[L"page"] = static_cast<wstringstream const&>(
+      wstringstream() << page ).str();
+    js::wValue jsonResults = mClient->request( makeURL(
+      widePrintf( L"genre/%d/movies", genre ), &query ) );
+    readJSONPagedMovieResults( jsonResults, results );
+    return results; 
+  }
+
+  PagedMovieResults TMDb::getGenreMovies( Genre genre, uint32_t page )
+  {
+    return getGenreMovies( genre.id, page );
+  }
+
   PagedMovieResults TMDb::searchMovies( const wstring& _query,
   bool adult, uint32_t year, uint32_t page )
   {
