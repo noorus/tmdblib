@@ -478,6 +478,20 @@ namespace TMDb {
     return company;
   }
 
+  GenreMap TMDb::getGenres()
+  {
+    GenreMap genres;
+    js::wValue jsonGenres = mClient->request( makeURL( L"genre/list" ) );
+    js::wArray arr = jsonGenres.getArray( L"genres" );
+    for ( js::wArray::iterator it = arr.begin(); it != arr.end(); ++it )
+    {
+      Genre genre;
+      readJSONGenre( (*it), genre );
+      genres[genre.id] = genre;
+    }
+    return genres;
+  }
+
   TMDb::~TMDb()
   {
     if ( mClient )

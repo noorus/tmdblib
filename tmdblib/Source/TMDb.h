@@ -324,6 +324,8 @@ namespace TMDb {
       uint32_t year = 0, uint32_t page = 1 );
     PagedCompanyResults searchCompanies( const wstring& query, uint32_t page = 1 );
     PagedPersonResults searchPeople( const wstring& query, uint32_t page = 1 );
+    // Genres
+    GenreMap getGenres();
   };
 
 }
