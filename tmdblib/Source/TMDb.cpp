@@ -91,6 +91,49 @@ namespace TMDb {
     }
   }
 
+  void TMDb::readJSONCastCredit( const js::wValue& jsonCredit,
+  CastCredit& credit )
+  {
+    const js::wObject& obj = jsonCredit.getObject();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const wstring& key = it->first;
+      const js::wValue& value = it->second;
+
+      if ( value.isNull() )
+        continue;
+
+      if ( key == L"character" ) {
+        credit.mFields.character = value.getString();
+        credit.mFieldBits[CastCredit::field_Character] = true;
+      }
+    }
+    readJSONMovie( jsonCredit, credit.mMovie );
+  }
+
+  void TMDb::readJSONCrewCredit( const js::wValue& jsonCredit,
+  CrewCredit& credit )
+  {
+    const js::wObject& obj = jsonCredit.getObject();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const wstring& key = it->first;
+      const js::wValue& value = it->second;
+
+      if ( value.isNull() )
+        continue;
+
+      if ( key == L"department" ) {
+        credit.mFields.department = value.getString();
+        credit.mFieldBits[CrewCredit::field_Department] = true;
+      } else if ( key == L"job" ) {
+        credit.mFields.department = value.getString();
+        credit.mFieldBits[CrewCredit::field_Job] = true;
+      }
+    }
+    readJSONMovie( jsonCredit, credit.mMovie );
+  }
+
   void TMDb::readJSONProductionCompany( const js::wValue& jsonCompany,
   Company& company )
   {
@@ -513,6 +556,33 @@ namespace TMDb {
       genres[genre.id] = genre;
     }
     return genres;
+  }
+
+  PersonCredits TMDb::getPersonCredits( uint32_t person )
+  {
+    PersonCredits credits;
+    js::wValue jsonCredits = mClient->request( makeURL(
+      widePrintf( L"person/%d/credits", person ) ) );
+    js::wArray castArray = jsonCredits.getArray( L"cast" );
+    for ( js::wArray::iterator it = castArray.begin(); it != castArray.end(); ++it )
+    {
+      CastCredit credit;
+      readJSONCastCredit( (*it), credit );
+      credits.castCredits.push_back( credit );
+    }
+    js::wArray crewArray = jsonCredits.getArray( L"crew" );
+    for ( js::wArray::iterator it = castArray.begin(); it != castArray.end(); ++it )
+    {
+      CrewCredit credit;
+      readJSONCrewCredit( (*it), credit );
+      credits.crewCredits.push_back( credit );
+    }
+    return credits;
+  }
+
+  PersonCredits TMDb::getPersonCredits( const Person& person )
+  {
+    return getPersonCredits( person.getID() );
   }
 
   TMDb::~TMDb()

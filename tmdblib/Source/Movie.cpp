@@ -7,16 +7,6 @@ namespace TMDb {
 # define MOVIE_CHECK_FIELD(x) if ( !mFieldBits[##x##] )\
   throw Exception( "Field does not exist in movie: " #x )
 
-  Movie::Movie()
-  {
-    mFieldBits.reset();
-  }
-
-  bool Movie::hasField( FieldBits field ) const
-  {
-    return mFieldBits[field];
-  }
-
   bool Movie::isAdult() const
   {
     MOVIE_CHECK_FIELD( field_Adult );

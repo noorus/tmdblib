@@ -160,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Credits.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\Exception.cpp"
 				>
 			</File>

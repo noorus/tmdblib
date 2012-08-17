@@ -1,20 +1,14 @@
 #pragma once
 
 #include <exception>
-#include <memory>
 #include <vector>
 #include <list>
 #include <map>
 #include <string>
-#include <fstream>
 #include <sstream>
-#include <queue>
-#include <regex>
-#include <stack>
 #include <bitset>
 
 #include <Poco/URI.h>
-#include <Poco/StreamCopier.h>
 #include <Poco/Net/Net.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
@@ -34,6 +28,7 @@ namespace TMDb {
   using std::vector;
   using std::string;
   using std::wstring;
+  using std::list;
   using std::pair;
   using std::map;
   using std::bitset;
@@ -44,8 +39,26 @@ namespace TMDb {
 
   typedef vector<wstring> StringVector;
   typedef map<wstring,wstring> StringMap;
+  typedef int FieldIndex;
   
   namespace js = json_spirit;
+
+  template <size_t _fields>
+  class FieldBasedClass {
+  protected:
+    bitset<_fields> mFieldBits;
+  public:
+    FieldBasedClass()
+    {
+      mFieldBits.reset();
+    }
+    bool hasField( FieldIndex field ) const
+    {
+      if ( field >= mFieldBits.size() )
+        throw Exception( "Field does not exist" );
+      return mFieldBits[field];
+    }
+  };
 
   class TMDb;
   class Movie;
@@ -75,10 +88,9 @@ namespace TMDb {
 
   typedef map<wstring,Language> LanguageMap;
 
-  class Person {
+  class Person: public FieldBasedClass<10> {
   friend class TMDb;
   protected:
-    bitset<10> mFieldBits;
     struct Fields {
       bool adult;
       // todo: also known as
@@ -92,8 +104,7 @@ namespace TMDb {
       wstring profilePath;
     } mFields;
   public:
-    Person();
-    enum FieldBits: int {
+    enum FieldBits: FieldIndex {
       field_Adult = 0,
       field_AlsoKnownAs,
       field_Biography,
@@ -105,7 +116,6 @@ namespace TMDb {
       field_PlaceOfBirth,
       field_ProfilePath
     };
-    bool hasField( FieldBits field ) const;
     bool isAdult() const;
     const wstring& getBiography() const;
     const date& getBirthday() const;
@@ -117,11 +127,10 @@ namespace TMDb {
     const wstring& getProfilePath() const;
   };
 
-  class Company {
+  class Company: public FieldBasedClass<7> {
   friend class TMDb;
   friend class Movie;
   protected:
-    bitset<7> mFieldBits;
     struct Fields {
       wstring description;
       wstring headquarters;
@@ -132,8 +141,7 @@ namespace TMDb {
       // todo: parent company, is it an ID or what?
     } mFields;
   public:
-    Company();
-    enum FieldBits: int {
+    enum FieldBits: FieldIndex {
       field_Description = 0,
       field_Headquarters,
       field_Homepage,
@@ -142,7 +150,6 @@ namespace TMDb {
       field_Name,
       field_ParentCompany
     };
-    bool hasField( FieldBits field ) const;
     const wstring& getDescription() const;
     const wstring& getHeadquarters() const;
     const wstring& getHomepage() const;
@@ -184,11 +191,9 @@ namespace TMDb {
   typedef PagedResults<Company> PagedCompanyResults;
   typedef PagedResults<Person> PagedPersonResults;
 
-  class Movie {
+  class Movie: public FieldBasedClass<22> {
   friend class TMDb;
   protected:
-    Movie();
-    bitset<22> mFieldBits;
     struct Fields {
       bool adult;
       wstring backdropPath;
@@ -214,7 +219,7 @@ namespace TMDb {
       uint32_t voteCount;
     } mFields;
   public:
-    enum FieldBits: int {
+    enum FieldBits: FieldIndex {
       field_Adult = 0,
       field_Backdrop,
       field_Collections,
@@ -238,7 +243,6 @@ namespace TMDb {
       field_VoteAverage,
       field_VoteCount
     };
-    bool hasField( FieldBits field ) const;
     bool isAdult() const;
     const wstring& getBackdropPath() const;
     uint32_t getBudget() const;
@@ -261,6 +265,49 @@ namespace TMDb {
     const wstring& getTitle() const;
     float getVoteAverage() const;
     uint32_t getVoteCount() const;
+  };
+
+  struct CastCredit: public FieldBasedClass<1> {
+    friend class TMDb;
+  protected:
+    struct Fields {
+      wstring character;
+    } mFields;
+    Movie mMovie;
+  public:
+    enum FieldBits: FieldIndex {
+      field_Character = 0
+    };
+    const wstring& getCharacter() const;
+    const Movie& getMovie() const;
+  };
+
+  typedef list<CastCredit> CastCreditList;
+
+  class CrewCredit: public FieldBasedClass<2> {
+    friend class TMDb;
+  protected:
+    struct Fields {
+      wstring department;
+      wstring job;
+    } mFields;
+    Movie mMovie;
+  public:
+    enum FieldBits: FieldIndex {
+      field_Department = 0,
+      field_Job
+    };
+    const wstring& getDepartment() const;
+    const wstring& getJob() const;
+    const Movie& getMovie() const;
+  };
+
+  typedef list<CrewCredit> CrewCreditList;
+
+  struct PersonCredits {
+  public:
+    CastCreditList castCredits;
+    CrewCreditList crewCredits;
   };
 
   class Exception: public std::runtime_error {
@@ -288,6 +335,8 @@ namespace TMDb {
     void readJSONMovie( const js::wValue& jsonMovie, Movie& movie );
     void readJSONGenre( const js::wValue& jsonGenre, Genre& genre );
     void readJSONPerson( const js::wValue& jsonPerson, Person& person );
+    void readJSONCastCredit( const js::wValue& jsonCredit, CastCredit& credit );
+    void readJSONCrewCredit( const js::wValue& jsonCredit, CrewCredit& credit );
     void readJSONProductionCompany( const js::wValue& jsonCompany,
       Company& company );
     void readJSONProductionCountry( const js::wValue& jsonCountry,
@@ -320,6 +369,9 @@ namespace TMDb {
     PagedMovieResults getCompanyMovies( const Company& company, uint32_t page = 1 );
     PagedMovieResults getGenreMovies( uint32_t genre, uint32_t page = 1 );
     PagedMovieResults getGenreMovies( const Genre& genre, uint32_t page = 1 );
+    // Person
+    PersonCredits getPersonCredits( uint32_t person );
+    PersonCredits getPersonCredits( const Person& person );
     // Companies
     Company getCompany( uint32_t id );
     // Search

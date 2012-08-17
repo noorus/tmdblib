@@ -7,16 +7,6 @@ namespace TMDb {
 # define COMPANY_CHECK_FIELD(x) if ( !mFieldBits[##x##] )\
   throw Exception( "Field does not exist in company: " #x )
 
-  Company::Company()
-  {
-    mFieldBits.reset();
-  }
-
-  bool Company::hasField( FieldBits field ) const
-  {
-    return mFieldBits[field];
-  }
-
   const wstring& Company::getDescription() const
   {
     COMPANY_CHECK_FIELD( field_Description );

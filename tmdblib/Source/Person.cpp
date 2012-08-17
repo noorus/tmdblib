@@ -7,16 +7,6 @@ namespace TMDb {
 # define PERSON_CHECK_FIELD(x) if ( !mFieldBits[##x##] )\
   throw Exception( "Field does not exist in person: " #x )
 
-  Person::Person()
-  {
-    mFieldBits.reset();
-  }
-
-  bool Person::hasField( FieldBits field ) const
-  {
-    return mFieldBits[field];
-  }
-
   bool Person::isAdult() const
   {
     PERSON_CHECK_FIELD( field_Adult );
