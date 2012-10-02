@@ -22,5 +22,4 @@ Credits
 
 Boost C++ Libraries copyright © the Boost project.  
 POCO C++ Libraries copyright © 2006-2012 Applied Informatics Software Engineering GmbH.  
-JSON Spirit copyright © John W. Wilkinson and later developers.  
-stdint.h copyright © 2006-2008 Alexander Chemeris.
+JSON Spirit copyright © John W. Wilkinson and later developers.

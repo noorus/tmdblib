@@ -134,6 +134,36 @@ namespace TMDb {
     readJSONMovie( jsonCredit, credit.mMovie );
   }
 
+  void TMDb::readJSONImage( const js::wValue& jsonImage, Image& image )
+  {
+    const js::wObject& obj = jsonImage.getObject();
+    for ( js::wObject::const_iterator it = obj.begin(); it != obj.end(); ++it )
+    {
+      const wstring& key = it->first;
+      const js::wValue& value = it->second;
+
+      if ( value.isNull() )
+        continue;
+
+      if ( key == L"aspect_ratio" ) {
+        image.mFields.aspectRatio = value.getReal();
+        image.mFieldBits[Image::field_AspectRatio] = true;
+      } else if ( key == L"file_path" ) {
+        image.mFields.filePath = value.getString();
+        image.mFieldBits[Image::field_FilePath] = true;
+      } else if ( key == L"height" ) {
+        image.mFields.height = value.getInt();
+        image.mFieldBits[Image::field_Height] = true;
+      } else if ( key == L"iso_639_1" ) {
+        image.mFields.languageCode = value.getString();
+        image.mFieldBits[Image::field_LanguageCode] = true;
+      } else if ( key == L"width" ) {
+        image.mFields.width = value.getInt();
+        image.mFieldBits[Image::field_Width] = true;
+      }
+    }
+  }
+
   void TMDb::readJSONProductionCompany( const js::wValue& jsonCompany,
   Company& company )
   {

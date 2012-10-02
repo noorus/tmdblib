@@ -19,11 +19,13 @@
 
 #define JSON_SPIRIT_VALUE_ENABLED
 #include "../json_spirit/reader_template.h"
-#include "../json_spirit/writer_template.h"
-
-#include "stdint.h"
 
 namespace TMDb {
+
+  typedef signed __int16 int16_t;
+  typedef signed __int32 int32_t;
+  typedef unsigned __int16 uint16_t;
+  typedef unsigned __int32 uint32_t;
 
   using std::vector;
   using std::string;
@@ -63,6 +65,8 @@ namespace TMDb {
   class TMDb;
   class Movie;
 
+  // Configuration container
+  // http://help.themoviedb.org/kb/api/configuration
   struct Configuration {
   public:
     wstring baseURL;
@@ -88,6 +92,8 @@ namespace TMDb {
 
   typedef map<wstring,Language> LanguageMap;
 
+  // Person entry
+  // http://help.themoviedb.org/kb/api/person-info
   class Person: public FieldBasedClass<10> {
   friend class TMDb;
   protected:
@@ -127,6 +133,8 @@ namespace TMDb {
     const wstring& getProfilePath() const;
   };
 
+  // Company entry
+  // http://help.themoviedb.org/kb/api/company-info
   class Company: public FieldBasedClass<7> {
   friend class TMDb;
   friend class Movie;
@@ -191,6 +199,36 @@ namespace TMDb {
   typedef PagedResults<Company> PagedCompanyResults;
   typedef PagedResults<Person> PagedPersonResults;
 
+  // Image entry
+  // http://help.themoviedb.org/kb/api/person-images
+  // http://help.themoviedb.org/kb/api/movie-images
+  class Image: public FieldBasedClass<5> {
+  friend class TMDb;
+  protected:
+    struct Fields {
+      double aspectRatio;
+      wstring filePath;
+      uint32_t height;
+      wstring languageCode;
+      uint32_t width;
+    } mFields;
+  public:
+    enum FieldBits: FieldIndex {
+      field_AspectRatio = 0,
+      field_FilePath,
+      field_Height,
+      field_LanguageCode,
+      field_Width
+    };
+    double getAspectRatio() const;
+    const wstring& getFilePath() const;
+    uint32_t getHeight() const;
+    const wstring& getLanguageCode() const;
+    uint32_t getWidth() const;
+  };
+
+  // Movie entry
+  // http://help.themoviedb.org/kb/api/movie-info
   class Movie: public FieldBasedClass<22> {
   friend class TMDb;
   protected:
@@ -267,8 +305,11 @@ namespace TMDb {
     uint32_t getVoteCount() const;
   };
 
+  // Cast credit entry
+  // http://help.themoviedb.org/kb/api/person-credits
+  // http://help.themoviedb.org/kb/api/movie-casts
   struct CastCredit: public FieldBasedClass<1> {
-    friend class TMDb;
+  friend class TMDb;
   protected:
     struct Fields {
       wstring character;
@@ -284,8 +325,11 @@ namespace TMDb {
 
   typedef list<CastCredit> CastCreditList;
 
+  // Crew credit entry
+  // http://help.themoviedb.org/kb/api/person-credits
+  // http://help.themoviedb.org/kb/api/movie-casts
   class CrewCredit: public FieldBasedClass<2> {
-    friend class TMDb;
+  friend class TMDb;
   protected:
     struct Fields {
       wstring department;
@@ -304,6 +348,8 @@ namespace TMDb {
 
   typedef list<CrewCredit> CrewCreditList;
 
+  // Person credits container
+  // http://help.themoviedb.org/kb/api/person-credits
   struct PersonCredits {
   public:
     CastCreditList castCredits;
@@ -337,6 +383,7 @@ namespace TMDb {
     void readJSONPerson( const js::wValue& jsonPerson, Person& person );
     void readJSONCastCredit( const js::wValue& jsonCredit, CastCredit& credit );
     void readJSONCrewCredit( const js::wValue& jsonCredit, CrewCredit& credit );
+    void readJSONImage( const js::wValue& jsonImage, Image& image );
     void readJSONProductionCompany( const js::wValue& jsonCompany,
       Company& company );
     void readJSONProductionCountry( const js::wValue& jsonCountry,
